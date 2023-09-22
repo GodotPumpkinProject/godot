@@ -77,29 +77,13 @@ void UpdateLoopServer::Update(double realTime, double gameTime) {
 		else {
 			e->OnUpdate(realTime, gameTime);
 		}
-
 	}
+
+	//Remove dead servers.
 	for (auto e : removeList) {
 		RemoveFromUpdate(e);
 	}
 }
-
-// void UpdateLoopServer::_bind_methods() {
-// 	// ClassDB::bind_method(D_METHOD("get_feed", "index"), &UpdateLoopServer::get_feed);
-//  //  	ClassDB::bind_method(D_METHOD("get_feed_count"), &UpdateLoopServer::get_feed_count);
-//  //  	ClassDB::bind_method(D_METHOD("feeds"), &UpdateLoopServer::get_feeds);
-//  //
-//  //  	ClassDB::bind_method(D_METHOD("add_feed", "feed"), &UpdateLoopServer::add_feed);
-//  //  	ClassDB::bind_method(D_METHOD("remove_feed", "feed"), &UpdateLoopServer::remove_feed);
-//  //
-//  //  	ADD_SIGNAL(MethodInfo("camera_feed_added", PropertyInfo(Variant::INT, "id")));
-//  //  	ADD_SIGNAL(MethodInfo("camera_feed_removed", PropertyInfo(Variant::INT, "id")));
-//  //
-//  //  	BIND_ENUM_CONSTANT(FEED_RGBA_IMAGE);
-//  //  	BIND_ENUM_CONSTANT(FEED_YCBCR_IMAGE);
-//  //  	BIND_ENUM_CONSTANT(FEED_Y_IMAGE);
-//  //  	BIND_ENUM_CONSTANT(FEED_CBCR_IMAGE);
-//   };
 
 UpdateLoopServer *UpdateLoopServer::singleton = nullptr;
 
