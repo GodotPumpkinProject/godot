@@ -91,6 +91,91 @@ UpdateLoopServer *UpdateLoopServer::get_singleton() {
 	return singleton;
 };
 
+void UpdateLoopServer::PrePhysicsUpdate(double realTime, double gameTime) {
+	std::vector<UpdateServer*> removeList = {};
+	for (auto e : this->updateList) {
+		if (e == nullptr)
+		{
+			removeList.emplace_back(e);
+		}
+		else {
+			e->PrePhysicsUpdate(realTime, gameTime);
+		}
+
+	}
+	for (auto e : removeList) {
+		RemoveFromUpdate(e);
+	}
+}
+
+void UpdateLoopServer::PhysicsUpdate(double realTime, double gameTime) {
+	std::vector<UpdateServer*> removeList = {};
+	for (auto e : this->updateList) {
+		if (e == nullptr)
+		{
+			removeList.emplace_back(e);
+		}
+		else {
+			e->PhysicsUpdate(realTime, gameTime);
+		}
+
+	}
+	for (auto e : removeList) {
+		RemoveFromUpdate(e);
+	}
+}
+
+void UpdateLoopServer::PostPhysicsUpdate(double realTime, double gameTime) {
+	std::vector<UpdateServer*> removeList = {};
+	for (auto e : this->updateList) {
+		if (e == nullptr)
+		{
+			removeList.emplace_back(e);
+		}
+		else {
+			e->PostPhysicsUpdate(realTime, gameTime);
+		}
+
+	}
+	for (auto e : removeList) {
+		RemoveFromUpdate(e);
+	}
+}
+
+void UpdateLoopServer::PreRenderUpdate(double realTime, double gameTime) {
+	std::vector<UpdateServer*> removeList = {};
+	for (auto e : this->updateList) {
+		if (e == nullptr)
+		{
+			removeList.emplace_back(e);
+		}
+		else {
+			e->PreRenderUpdate(realTime, gameTime);
+		}
+
+	}
+	for (auto e : removeList) {
+		RemoveFromUpdate(e);
+	}
+}
+
+void UpdateLoopServer::PostUpdate(double realTime, double gameTime) {
+	std::vector<UpdateServer*> removeList = {};
+	for (auto e : this->updateList) {
+		if (e == nullptr)
+		{
+			removeList.emplace_back(e);
+		}
+		else {
+			e->PostUpdate(realTime, gameTime);
+		}
+
+	}
+	for (auto e : removeList) {
+		RemoveFromUpdate(e);
+	}
+}
+
 UpdateLoopServer::UpdateLoopServer() {
 	singleton = this;
 };

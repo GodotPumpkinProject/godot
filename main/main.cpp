@@ -548,7 +548,6 @@ Error Main::test_setup() {
 	OS::get_singleton()->initialize();
 
 	engine = memnew(Engine);
-	updateLoopServer = memnew(UpdateLoopServer);
 
 	register_core_types();
 	register_core_driver_types();
@@ -603,6 +602,8 @@ Error Main::test_setup() {
 
 	initialize_modules(MODULE_INITIALIZATION_LEVEL_SCENE);
 	GDExtensionManager::get_singleton()->initialize_extensions(GDExtension::INITIALIZATION_LEVEL_SCENE);
+
+	updateLoopServer = memnew(UpdateLoopServer);
 
 #ifdef TOOLS_ENABLED
 	ClassDB::set_current_api(ClassDB::API_EDITOR);
@@ -775,7 +776,6 @@ Error Main::setup(const char *execpath, int argc, char *argv[], bool p_second_ph
 	OS::get_singleton()->benchmark_begin_measure("Startup", "Setup");
 
 	engine = memnew(Engine);
-	updateLoopServer = memnew(UpdateLoopServer);
 
 	MAIN_PRINT("Main: Initialize CORE");
 	OS::get_singleton()->benchmark_begin_measure("Startup", "Core");
@@ -854,6 +854,8 @@ Error Main::setup(const char *execpath, int argc, char *argv[], bool p_second_ph
 		packed_data = memnew(PackedData);
 	}
 
+	updateLoopServer = memnew(UpdateLoopServer);
+	
 #ifdef MINIZIP_ENABLED
 
 	//XXX: always get_singleton() == 0x0
@@ -3686,6 +3688,8 @@ bool Main::iteration() {
 	// process all our active interfaces
 	XRServer::get_singleton()->_process();
 
+	UpdateLoopServer::get_singleton()->PrePhysicsUpdate(process_step, process_step * time_scale);
+
 	NavigationServer2D::get_singleton()->sync();
 	NavigationServer3D::get_singleton()->sync();
 
@@ -3719,6 +3723,8 @@ bool Main::iteration() {
 		navigation_process_ticks = MAX(navigation_process_ticks, OS::get_singleton()->get_ticks_usec() - navigation_begin); // keep the largest one for reference
 		navigation_process_max = MAX(OS::get_singleton()->get_ticks_usec() - navigation_begin, navigation_process_max);
 
+		UpdateLoopServer::get_singleton()->PhysicsUpdate(physics_step, physics_step * time_scale);
+
 		message_queue->flush();
 
 		PhysicsServer3D::get_singleton()->end_sync();
@@ -3736,6 +3742,8 @@ bool Main::iteration() {
 		Engine::get_singleton()->_in_physics = false;
 	}
 
+	UpdateLoopServer::get_singleton()->PostPhysicsUpdate(process_step, process_step * time_scale);
+
 	if (Input::get_singleton()->is_using_input_buffering() && agile_input_event_flushing) {
 		Input::get_singleton()->flush_buffered_events();
 	}
@@ -3747,6 +3755,8 @@ bool Main::iteration() {
 	}
 	UpdateLoopServer::get_singleton()->Update(process_step, process_step * time_scale);
 	message_queue->flush();
+
+	UpdateLoopServer::get_singleton()->PreRenderUpdate(process_step, process_step * time_scale);
 
 	RenderingServer::get_singleton()->sync(); //sync if still drawing from previous frames.
 
@@ -3773,6 +3783,8 @@ bool Main::iteration() {
 	}
 
 	AudioServer::get_singleton()->update();
+
+	UpdateLoopServer::get_singleton()->PostUpdate(process_step, process_step * time_scale);
 
 	if (EngineDebugger::is_active()) {
 		EngineDebugger::get_singleton()->iteration(frame_time, process_ticks, physics_process_ticks, physics_step);
