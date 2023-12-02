@@ -804,7 +804,8 @@ if selected_platform in platform_list:
         elif env["warnings"] == "moderate":
             env.Append(CCFLAGS=["-Wall", "-Wno-unused"] + common_warnings)
         else:  # 'no'
-            env.Append(CCFLAGS=["-w"])
+            #env.Append(CCFLAGS=["-w"])
+            pass
 
         if env["werror"]:
             env.Append(CCFLAGS=["-Werror"])
