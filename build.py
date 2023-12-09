@@ -72,7 +72,7 @@ def parser_init():
 
 def main():
     os_type = platform.system()
-    num_threads =  max(multiprocessing.cpu_count() - 4, 6)
+    num_threads =  min(multiprocessing.cpu_count() - 2, 6)
 
     # Get user input
     args = parser_init()
@@ -83,7 +83,7 @@ def main():
     if "debug" in args.mode:
         if os_type == "Windows": extra_debug_options += "vsproj=yes"
     print("Building binary..")
-    command = f"scons platform={args.os} -j {num_threads} {extra_debug_options} {build_options[args.mode]} custom_modules={custom_modules_path}"
+    command = f"scons platform={args.os} -j {num_threads} {extra_debug_options} {build_options[args.mode]} compiledb=yes custom_modules={custom_modules_path}"
     try:
         run_command_in_new_terminal(command)
     except subprocess.CalledProcessError as e:
@@ -110,7 +110,7 @@ def main():
         
         try:
             # Run the command and capture output
-            execute_bin = f"./bin/godot.{args.os}.editor.{'dev' if 'debug' in args.mode else ''}.{arch}{'.exe' if 'windows' in args.os else ''}"
+            execute_bin = f"./bin/godot.{args.os}.editor{'.dev' if 'debug' in args.mode else ''}.{arch}{'.exe' if 'windows' in args.os else ''}"
             execute_bin = os.path.abspath(execute_bin)
             release_type = '--export-release' if 'production' in args.mode else '--export-debug'
 
