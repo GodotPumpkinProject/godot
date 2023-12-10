@@ -22,7 +22,6 @@
 ### Build configuration ###
 ###########################
 
-/custom.py
 misc/hooks/pre-commit-custom-*
 
 #############################
@@ -193,8 +192,6 @@ cscope.po.out
 *.swp
 
 # Visual Studio Code
-.vscode/
-*.code-workspace
 .history/
 
 # Xcode
